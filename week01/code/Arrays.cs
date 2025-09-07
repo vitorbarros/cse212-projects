@@ -13,7 +13,15 @@ public static class Arrays
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
 
-        return []; // replace this return statement with your own
+        double[] result = new double[length];
+        
+        // Fill array with multiples
+        for (int i = 0; i < length; i++)
+        {
+            result[i] = number * (i + 1);
+        }
+        
+        return result;
     }
 
     /// <summary>
@@ -29,5 +37,19 @@ public static class Arrays
         // Remember: Using comments in your program, write down your process for solving this problem
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
+
+        // Calculate split point
+        int splitPoint = data.Count - amount;
+        
+        // Get the elements that will move to the front (last 'amount' elements)
+        List<int> elementsToFront = data.GetRange(splitPoint, amount);
+        
+        // Get the elements that will move to the back (first elements)
+        List<int> elementsToBack = data.GetRange(0, splitPoint);
+        
+        // Clear the original list and rebuild with rotated elements
+        data.Clear();
+        data.AddRange(elementsToFront);  // Add elements that moved to front
+        data.AddRange(elementsToBack);   // Add elements that moved to back
     }
 }
