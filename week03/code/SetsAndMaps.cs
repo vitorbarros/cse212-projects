@@ -21,8 +21,27 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var wordSet = new HashSet<string>(words);
+        var pairs = new List<string>();
+        
+        for (int i = 0; i < words.Length; i++)
+        {
+            string word = words[i];
+            
+            // Skip if the word has the same character twice (like "aa")
+            if (word[0] == word[1]) continue;
+            
+            // Create the reverse of the word
+            string reversed = word[1].ToString() + word[0].ToString();
+            
+            // Check if the reversed word exists in the set and we haven't processed it yet
+            if (wordSet.Contains(reversed) && word.CompareTo(reversed) < 0)
+            {
+                pairs.Add($"{reversed} & {word}");
+            }
+        }
+        
+        return pairs.ToArray();
     }
 
     /// <summary>
@@ -42,7 +61,19 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            // Degree is in column 4 (index 3)
+            if (fields.Length > 3)
+            {
+                string degree = fields[3];
+                if (degrees.ContainsKey(degree))
+                {
+                    degrees[degree]++;
+                }
+                else
+                {
+                    degrees[degree] = 1;
+                }
+            }
         }
 
         return degrees;
@@ -66,8 +97,45 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        // Remove spaces and convert to lowercase
+        string cleanWord1 = word1.Replace(" ", "").ToLower();
+        string cleanWord2 = word2.Replace(" ", "").ToLower();
+        
+        // If lengths are different, they can't be anagrams
+        if (cleanWord1.Length != cleanWord2.Length)
+            return false;
+        
+        // Count characters in both words
+        var charCount1 = new Dictionary<char, int>();
+        var charCount2 = new Dictionary<char, int>();
+        
+        foreach (char c in cleanWord1)
+        {
+            if (charCount1.ContainsKey(c))
+                charCount1[c]++;
+            else
+                charCount1[c] = 1;
+        }
+        
+        foreach (char c in cleanWord2)
+        {
+            if (charCount2.ContainsKey(c))
+                charCount2[c]++;
+            else
+                charCount2[c] = 1;
+        }
+        
+        // Compare character counts
+        if (charCount1.Count != charCount2.Count)
+            return false;
+        
+        foreach (var kvp in charCount1)
+        {
+            if (!charCount2.ContainsKey(kvp.Key) || charCount2[kvp.Key] != kvp.Value)
+                return false;
+        }
+        
+        return true;
     }
 
     /// <summary>
@@ -101,6 +169,22 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+        
+        var earthquakeSummaries = new List<string>();
+        
+        if (featureCollection?.Features != null)
+        {
+            foreach (var feature in featureCollection.Features)
+            {
+                if (feature.Properties != null)
+                {
+                    string place = feature.Properties.Place ?? "Unknown location";
+                    double magnitude = feature.Properties.Mag;
+                    earthquakeSummaries.Add($"{place} - Mag {magnitude:F2}");
+                }
+            }
+        }
+        
+        return earthquakeSummaries.ToArray();
     }
 }
